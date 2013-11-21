@@ -1,0 +1,1053 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Document Store Basics | MK</title>
+<meta name="description"
+	content="A high-level overview of RESTful APIs.">
+<meta name="author" content="Brian Shoemaker">
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style"
+	content="black-translucent" />
+<meta name="viewport"
+	content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="stylesheet" href="css/reveal.min.css">
+<!--<link rel="stylesheet" href="css/theme/default.css" id="theme">-->
+<link rel="stylesheet" href="css/theme/sky.css" id="theme">
+
+<!-- For syntax highlighting -->
+<link rel="stylesheet" href="lib/css/xcode.css">
+
+<!-- If the query includes 'print-pdf', use the PDF print sheet -->
+<script src="https://google-code-prettify.googlecode.com/svn/loader/run_prettify.js"></script>
+
+<!--[if lt IE 9]>
+		<script src="lib/js/html5shiv.js"></script>
+		<![endif]-->
+
+</head>
+<body>
+	<div class="reveal">
+		<div class="slides">
+			
+			<!-- Title Slide -->
+			<section>
+				<h2>Document Store Basics with MongoDB</h2> <br>
+				<img src="pictures/mongo.jpg" />
+			</section>
+
+			<section>
+				<h3>Most Popular Document Stores of Today</h3>
+				<ul>
+					<li>MongoDB</li>
+					<li>ElasticSearch</li>
+					<li>Couchbase</li>
+					<li>CouchDB</li>
+					<li>RavenDB</li>
+				</ul>
+				<br><br>
+				<p>* Note: <i>Hadoop</i> and <i>Cassandra</i> are related, but are considered "Wide Column Stores"</p>
+			</section>
+
+			<section>
+				<h3>Why MongoDB?</h3>
+				<ul>
+					<li>Great Documentation</li>
+					<li>Rising Popularity</li>
+					<li>A Lot of Similarities with other Document Stores</li>
+				</ul>
+			</section>
+
+			<section>
+				<h3>Open Source DB Market Share</h3>
+				<img src="pictures/market_share1.jpg"/>
+			</section>
+			
+			<!-- What is A Document? -->
+			<section>
+				<h2>What is A "Document"?</h2>
+				<br />
+				<ul>
+					<li>JSON representation of an object</li>	
+				</ul>
+				<br><br>
+				<p> ( I use movies for example data ...)</p>
+				<pre><code class="javascript">{
+   "title":"Toy Story 3",
+   "year":2010,
+   "genres":[
+      "Animation",
+      "Kids & Family",
+      "Science Fiction & Fantasy",
+      "Comedy"
+   ],
+   "mpaa_rating":"G",
+   "runtime":103,
+   "ratings":{
+      "critics_rating":"Certified Fresh",
+      "critics_score":99,
+      "audience_rating":"Upright",
+      "audience_score":91
+   },
+   "abridged_cast":[
+      {
+         "name":"Tom Hanks",
+         "characters":[
+            "Woody"
+         ]
+      },
+      {
+         "name":"Tim Allen",
+         "characters":[
+            "Buzz Lightyear"
+         ]
+      },
+      {
+         "name":"Joan Cusack",
+         "characters":[
+            "Jessie the Cowgirl"
+         ]
+      },
+      {
+         "name":"Don Rickles",
+         "characters":[
+            "Mr. Potato Head"
+         ]
+      },
+      {
+         "name":"Wallace Shawn",
+         "characters":[
+            "Rex"
+         ]
+      }
+   ],
+   "abridged_directors":[
+      {
+         "name":"Lee Unkrich"
+      }
+   ],
+   "studio":"Walt Disney Pictures"
+}</code></pre>
+			</section>
+
+			<section>
+				<h2>Fundamental Document Store Concepts</h2>
+				<br />
+				<ul>
+					<li>Docs are similar to rows in Relational Databases</li>
+					<li>No Schema!</li>
+					<ul>
+						<li>Different data could be stored for each "document"</li>
+						<li>aka every record doesn't need to have the same fields</li>
+						<li>New data (fields) can be added easily</li>
+						<li>A lot more freedom to alter the data</li>
+					</ul>
+					<li>Only UNIQUE indexes are available</li>
+				</ul>
+			</section>
+
+			<section>
+				<h2>
+					NoSQL/Document Stores are <br /> <strong><span
+						style="color: blue;">NOT a Replacement</span></strong> <br />for
+					traditional RDBMS!
+				</h2>
+				<ul>
+					<li>Each has it's own advantages / disadvantages</li>
+					<li>Could be used together</li>
+					<li>Depends on the data model</li>
+				</ul>
+				<br />
+			</section>
+
+			<section>
+				<h2>
+					When to Use NoSQL <br> Document Stores
+				</h2>
+				<br />
+				<ul>
+					<li>When you have unstructured/schema-less data</li>
+					<li>When you might want to include new fields without any
+						hassle</li>
+					<li>When your data model is <i>flat</i> and <i>denormalized</i></li>
+					<li>When your major concerns are <i>scalability</i> and <i>performance</i></li>
+				</ul>
+			</section>
+
+			<section>
+				<h2>Criticism</h2>
+				<br />
+				<ul>
+					<li>Poor Data Integrity / Data Loss</li>
+					<li>SQL Databases are more mature</li>
+					<li>Lack of support for transactions</li>
+					<li>NoSQL as a niche phenomenon - it will fade away</li>
+				</ul>
+			</section>
+
+			<section>
+				<img src="pictures/headings.png" style="border: none" /> <br>
+				<img src="pictures/trends.png" style="border: none" />
+			</section> 
+
+			<section>
+				<h3>MongoDB Data Storage</h3>
+				<p>Stored in Binary JSON format (BSON)</p>
+				<br>
+				<img src="pictures/bson.png" />
+			</section>
+
+			<section>
+				<h3><a href="http://api.mongodb.org/perl/current/MongoDB/DataTypes.html">MongoDB Allowed Datatypes</a></h3>
+				<ul>
+					<li>Strings</li>
+					<li>Arrays</li>
+					<li>Embedded Documents</li>
+					<li>Dates</li>
+					<li>Regular Expressions</li>
+					<li>Booleans</li>
+					<li>Numbers</li>
+					<li>OID Values</li>
+					<li>Binary Data</li>
+					<li>Code! (only javascript)</li>
+					<li>MinKey</li>
+					<li>MaxKey</li>
+					<li>Timestamp</li>
+				</ul>
+			</section>
+
+			<!-- Starting up the Server -->
+			<section>
+				<h3>Starting up the server...</h3>
+				<br>
+				<img src="pictures/startup.png" />
+			</section>
+
+			<!-- Creating the Database -->
+			<section>
+				<h2>Creating a MongoDB Database...</h2>
+				<br>
+				<pre><code class="javascript">use movies;
+db.movies.insert(...);</code></pre>
+				<p>That's It!</p>
+			</section>
+
+			<section>
+				<h2>CRUD Operations</h2>
+				<ul>
+					<li>Create</li>
+					<li>Read</li>
+					<li>Update</li>
+					<li>Delete</li>
+				</ul>
+			</section>
+
+			<section>
+				<h2>Creates</h2>
+				<br>
+				<ul>
+					<li>Basic Inserts</li>
+					<li>Inserts Using Variables</li>
+					<li>ID Values</li>
+					<li>Inserting Multiple Documents</li>
+				</ul>
+			</section>
+
+<section>
+				<h2>insert()</h2>
+				<br>
+				<pre><code class="javascript">dbs.movies.insert({
+   "title":"Toy Story 3",
+   "year":2010,
+   "genres":[
+      "Animation",
+      "Kids & Family",
+      "Science Fiction & Fantasy",
+      "Comedy"
+   ],
+   "mpaa_rating":"G",
+   "runtime":103,
+   "ratings":{
+      "critics_rating":"Certified Fresh",
+      "critics_score":99,
+      "audience_rating":"Upright",
+      "audience_score":91
+   },
+   "abridged_cast":[
+      {
+         "name":"Tom Hanks",
+         "characters":[
+            "Woody"
+         ]
+      },
+      {
+         "name":"Tim Allen",
+         "characters":[
+            "Buzz Lightyear"
+         ]
+      },
+      {
+         "name":"Joan Cusack",
+         "characters":[
+            "Jessie the Cowgirl"
+         ]
+      },
+      {
+         "name":"Don Rickles",
+         "characters":[
+            "Mr. Potato Head"
+         ]
+      },
+      {
+         "name":"Wallace Shawn",
+         "characters":[
+            "Rex"
+         ]
+      }
+   ],
+   "abridged_directors":[
+      {
+         "name":"Lee Unkrich"
+      }
+   ],
+   "studio":"Walt Disney Pictures"
+});</code></pre>
+			</section>
+
+			<section>
+				<h4>You can also assign to a variable within the Mongo shell...</h4>
+				<br>
+				<pre><code class="javascript">var toy_story = {
+   "title":"Toy Story 3",
+   "year":2010,
+   "genres":[
+      "Animation",
+      "Kids & Family",
+      "Science Fiction & Fantasy",
+      "Comedy"
+   ],
+   "mpaa_rating":"G",
+   "runtime":103,
+   "ratings":{
+      "critics_rating":"Certified Fresh",
+      "critics_score":99,
+      "audience_rating":"Upright",
+      "audience_score":91
+   },
+   "abridged_cast":[
+      {
+         "name":"Tom Hanks",
+         "characters":[
+            "Woody"
+         ]
+      },
+      {
+         "name":"Tim Allen",
+         "characters":[
+            "Buzz Lightyear"
+         ]
+      },
+      {
+         "name":"Joan Cusack",
+         "characters":[
+            "Jessie the Cowgirl"
+         ]
+      },
+      {
+         "name":"Don Rickles",
+         "characters":[
+            "Mr. Potato Head"
+         ]
+      },
+      {
+         "name":"Wallace Shawn",
+         "characters":[
+            "Rex"
+         ]
+      }
+   ],
+   "abridged_directors":[
+      {
+         "name":"Lee Unkrich"
+      }
+   ],
+   "studio":"Walt Disney Pictures"
+}</code></pre>
+<pre><code class="javascript">db.movies.insert( toy_story );</code></pre>
+			</section>
+
+			<section>
+				<h3>Specifying an Id Value</h3>
+				<br>
+				<pre><code class="javascript">db.movies.insert({
+   "_id" : 123,
+   "title":"Toy Story 3",
+   "year":2010,
+   "genres":[
+      "Animation",
+      "Kids & Family",
+      "Science Fiction & Fantasy",
+      "Comedy"
+   ],
+   ... 
+});</code></pre>
+			</section>
+
+			<section>
+				<h3>Omitting an Id Value</h3>
+				<br>
+				<p> This is how it is inserted when omitting ... </p>
+				<pre><code class="javascript">{
+   "_id":ObjectId("525e8b1d986bd22f482fe9d2"),
+   "title":"Toy Story 3",
+   "year":2010,
+   "genres":[
+      "Animation",
+      "Kids & Family",
+      "Science Fiction & Fantasy",
+      "Comedy"
+   ],
+   ...
+}</code></pre>
+			</section>
+
+			<section>
+				<h3>Inserting Multiple Documents</h3>
+				<br>
+				<p> Insert array of movies into the movies collection </p>
+				<pre><code class="javascript">db.movies.insert([
+   {
+      "title":"Machete",
+      "year":2013,
+      "genres":[
+         "Action & Adventure"
+      ],
+      ...
+   },
+   {
+      "title":"Capitan Phillips",
+      "year":2013,
+      "genres":[
+         "Drama"
+      ],
+      ...
+   },
+   {
+      "title":"Forrest Gump",
+      "year":1994,
+      "genres":[
+         "Drama",
+         "Romance",
+         "Comedy"
+      ],
+      ...
+   },
+   {
+      "title":"Titanic",
+      "year":1997,
+      "genres":[
+         "Documentary",
+         "Drama",
+         "Romance",
+         "Classics"
+      ],
+      ...
+   }
+]);</code></pre>
+			</section>
+
+			<section>
+				<h2>Reads</h2>
+				<br>
+				<ul>
+					<li>Find() Syntax</li>
+					<li>Basic Querying</li>
+					<li>Returning Certain Fields</li>
+					<li>Logical Operators</li>
+					<li>Equality Conditions</li>
+					<li>Comparison Operators</li>
+					<li>Other Operators</li>
+					<li>Array Matching</li>
+					<li>Querying Subdocuments</li>
+					<li>Dot Notation</li>
+				</ul>
+			</section>
+
+			<section>
+				<h2>find() syntax ...</h2>
+				<br />
+		
+				<pre><code class="javascript">db.collection.find({criteria}, {projection})</code></pre>
+				<br />
+				<ul>
+					<li>criteria = search criteria (what you would find in the WHERE clause)</li>
+					<li>projection = fields to return (what you would find with SELECT)</li>
+				</ul>
+			</section>
+
+			<section>
+				<h2>The Most Basic Query...</h2>
+				<br />
+				<h4>Mongo</h4>
+				<pre><code class="javascript">db.movies.find();</code></pre>
+				<br />
+				<h4>How this would look in SQL ...</h4>
+				<pre><code class="sql">SELECT * FROM movies;</code></pre>
+			</section>
+
+			<section>
+				<h2>Returning certain fields...</h2>
+				<br />
+				<h4>Mongo</h4>
+				<pre><code class="javascript">db.movies.find( {} , { "title": 1, "year": 1, "genres": 1});</code></pre>
+				<br />
+				<h4>How this would look in SQL ...</h4>
+				<pre><code class="sql">SELECT title, year, genres 
+FROM movies;</code></pre>
+			</section>
+
+			<section>
+				<h2>Omitting Fields...</h2>
+				<br />
+				<h4>Mongo</h4>
+				<pre><code class="javascript">db.movies.find( {} , { "_id": 0, "genres": 0});</code></pre>
+				<br />
+				<h4>How this would look in SQL ...</h4>
+				<pre><code class="sql">SELECT title
+, year
+, mpaa_rating
+, runtime
+, ratings
+, abridged_cast
+, abridged_director 
+FROM movies;</code></pre>
+			</section>
+
+			<section>
+				<h3>Logical Operators - AND</h3>
+				<br />
+				<h4>Mongo</h4>
+				<pre><code class="javascript">db.movies.find({
+   "year":2013,
+   "mpaa_rating":"PG-13"
+},
+{
+   "title":1,
+   "year":1,
+   "mpaa_rating":1,
+   "_id":0
+});</code></pre>
+				<br />
+				<h4>How this would look in SQL ...</h4>
+				<pre><code class="sql">SELECT title, year, mpaa_rating 
+FROM movies 
+WHERE year = '2013' 
+AND mpaa_rating = 'PG-13';</code></pre>
+			</section>
+
+			<section>
+				<h3>Logical Operators - OR</h3>
+				<br />
+				<pre><code class="javascript">db.movies.find({
+   $or:[
+      {
+         "year":2013
+      },
+      {
+         "mpaa_rating":"PG-13"
+      }
+   ]
+},
+{
+   "title":1,
+   "year":1,
+   "mpaa_rating":1,
+   "_id":0
+});</code></pre><br>
+				<pre><code class="sql">SELECT title, year, mpaa_rating 
+FROM movies 
+WHERE year = '2013' 
+OR mpaa_rating = 'PG-13';</code></pre>
+			</section>
+
+			<section>
+				<h3>OR / AND Combination</h3>
+				<br />
+				<pre><code class="javascript">db.movies.find({
+   "year":2013,
+   $or:[
+      {
+         "studio": "Sony Pictures"
+      },
+      {
+         "mpaa_rating":"R"
+      }
+   ]
+},
+{
+   "title":1,
+   "studio":1,
+   "year": 1,
+   "mpaa_rating": 1,
+   "_id":0
+});</code></pre><br>
+				<pre><code class="sql">SELECT title, studio, year, mpaa_rating
+FROM movies 
+WHERE year = '2013' 
+AND (studio = 'Sony Pictures' OR mpaa_rating = 'R');</code></pre>
+			</section>
+
+
+			<section>
+				<h2>Comparison Operators</h2>
+				<br />
+				<br />
+
+				<p>$gt &nbsp;&nbsp;$gte&nbsp;&nbsp;
+					$in&nbsp;&nbsp;$lt&nbsp;&nbsp; $lte&nbsp;&nbsp; $ne&nbsp;&nbsp;
+					$nin</p>
+			</section>
+
+			<section>
+				<h3>Comparison Operator Examples<h3>
+				<h4> Movies with Runtime >= 2 Hours </h4>
+				<pre><code class="javascript">db.movies.find({
+   "runtime":{
+      $gte:120
+   }
+},
+{
+   "title":1,
+   "runtime":1,
+   "_id":0
+});</code></pre>
+				<h4> Movies without "Drama" as a listed Genre</h4>
+				<pre><code class="javascript">db.movies.find({
+   "genres":{
+      $nin: ["Drama" , "Documentary"]
+   }
+},
+{
+   "title":1,
+   "genres":1,
+   "_id":0
+});</code></pre>
+			</section>
+			
+			<section>
+				<h2>Other Nifty Operators...</h2>
+				<br />
+				<br />
+
+				<p>$exists &nbsp;&nbsp;$type&nbsp;&nbsp;
+					$mod&nbsp;&nbsp;$regex&nbsp;&nbsp;</p>
+			</section>
+
+			<section>
+				<h3>$exists<h3>
+				<h4> Movies where an audience rating doesn't exist </h4>
+				<pre><code class="javascript">db.movies.find({
+   "ratings.audience_rating":{
+      $exists:false
+   }
+},
+{
+   "title":1,
+   "ratings":1,
+   "_id":0
+});</code></pre>
+	<h4> (Notice the use of dot notation) </h4>
+			</section>
+
+			<section>
+				<h3>$regex (Perl Compatible Regexes)<h3>
+				<h4>Movies with a cast member whose first name starts with 'T'</h4>
+				<pre><code class="javascript">db.movies.find( {
+   "abridged_cast.name":/\AT.*/i
+},
+{
+   "title":1,
+   "abridged_cast.name":1,
+   "_id":0
+});</code></pre>
+				<pre><code class="javascript">{
+   "title":"Toy Story 3",
+   "abridged_cast":[
+      {
+         "name":"Tom Hanks"
+      },
+      {
+         "name":"Tim Allen"
+      },
+      {
+         "name":"Joan Cusack"
+      },
+      {
+         "name":"Don Rickles"
+      },
+      {
+         "name":"Wallace Shawn"
+      }
+   ]
+}{
+   "title":"Capitan Phillips",
+   "abridged_cast":[
+      {
+         "name":"Tom Hanks"
+      },
+      {
+         "name":"Catherine Keener"
+      },
+      {
+         "name":"Corey Johnson"
+      },
+      {
+         "name":"Chris Mulkey"
+      }
+   ]
+}{
+   "title":"Forrest Gump",
+   "abridged_cast":[
+      {
+         "name":"Tom Hanks"
+      },
+      {
+         "name":"Gary Sinise"
+      },
+      {
+         "name":"Sally Field"
+      },
+      {
+         "name":"Robin Wright"
+      }
+   ]
+}</code></pre>
+			</section>
+
+			<section>
+				<h3>Array Matching<h3>
+					<br>
+				<h4>To Find Comedy Movies...</h4>
+				<pre><code class="javascript">db.movies.find({
+   "genres": "Comedy"
+},
+{
+   "title":1,
+   "genres":1,
+   "_id":0
+});</code></pre>
+			</section>
+
+			<section>
+	<h4>To Find Movies Listed as Comedy & Drama</h4>
+				<pre><code class="javascript">db.movies.find({
+   "genres":{
+      $all:[
+         "Drama",
+         "Comedy"
+      ]
+   }
+},
+{
+   "title":1,
+   "genres":1,
+   "_id":0
+});</code></pre>
+<h4>This wouldn't work though...</h4>
+			<pre><code class="javascript">db.movies.find({
+   "genres":[
+      "Comedy",
+      "Drama"
+   ]
+},
+{
+   "title":1,
+   "genres":1,
+   "_id":0
+});</code></pre>
+			</section>
+
+
+			<!-- Joins -->
+			<section>
+				<h2>What About Joins?</h2>
+				<br>
+				<ul>
+					<li>Not Officially Supported in MongoDB</li>
+					<li>You could easily write your own function to resolve relationships</li>
+					<li>aka you can store doc OIDs in other documents</li>
+				</ul>
+			</section>
+
+			<!-- UPDATES -->
+			<section>
+				<h2>Updates</h2>
+				<br>
+				<ul>
+					<li>Update Syntax</li>
+					<li>Basic Examples</li>
+					<li>Using <i>UPSERT</i> flag</li>
+					<li>Using <i>MULTI</i> flag</li>
+				</ul>
+			</section>
+
+			<section>
+				<h2>update() syntax ...</h2>
+				<br />
+		
+				<pre><code class="javascript">db.collection.update(
+  {query},
+  {update},
+  {
+    upsert: {Boolean},
+    multi: {Boolean},
+  })</code></pre>
+				<br />
+				<ul>
+					<li>query = search criteria (same as we were doing before)</li>
+					<li>update = the changes to apply</li>
+				</ul>
+			</section>
+
+			<section>
+				<h2>Update the critic ratings of <br>"Titanic"</h2>
+				<br>
+				<pre><code class="javascript">db.movies.update({
+   "title":"Titanic"
+},
+{
+   $set:{
+      "ratings.critics_score":65,
+      "ratings.critics_rating":"Just Okay"
+   }
+})</code></pre>
+			</section>
+
+			<section>
+				<h2>How to <span class="red">NOT</span></h2>
+				<h2>Update the critic ratings of <br>"Titanic"</h2>
+				<br>
+				<pre><code class="javascript">db.movies.update({
+   "title":"Titanic"
+},
+{
+  "ratings.critics_score":65,
+  "ratings.critics_rating":"Just Okay"
+});</code></pre>
+			<p>This will replace the entire record with only these fields...</p>
+			</section>
+
+			<section>
+				<h2>Using the <i>UPSERT</i> flag</h2>
+				<br>
+				<ul>
+					<li>Does an insert if document doesn't exist</li>
+					<li>Does an update on the document if it exists</li>
+					<li>Same as MySQL Upsert or Oracle Merge</li>
+				</ul>
+			</section>
+
+			<section>
+				<h2>Upsert a new movie ...</h2>
+				<br>
+				<pre><code class="javascript">db.movies.update({
+   "title":"Don Jon"
+},
+{
+   "title":"Don Jon",
+   "year":2013,
+   "genres":[
+      "Drama",
+      "Comedy"
+   ],
+   "mpaa_rating":"R",
+   "runtime":90,
+   "ratings":{
+      "critics_rating":"Certified Fresh",
+      "critics_score":82,
+      "audience_rating":"Liked It",
+      "audience_score":66
+   },
+   "abridged_cast":[
+      {
+         "name":"Joseph Gordon-Levitt",
+         "characters":[
+            "Don Jon Martel"
+         ]
+      },
+      {
+         "name":"Scarlett Johansson",
+         "characters":[
+            "Barbara Sugarman"
+         ]
+      },
+      {
+         "name":"Julianne Moore",
+         "characters":[
+            "Esther"
+         ]
+      }
+   ],
+   "abridged_directors":[
+      {
+         "name":"Joseph Gordon-Levitt"
+      }
+   ],
+   "studio":"Relativity Media"
+},
+{
+   upsert:true
+});</code></pre>
+			</section>
+
+			<section>
+				<h3>Multiple Updates</h3>
+				<br>
+				<pre><code class="javascript">db.movies.update({
+   "mpaa_rating":"R"
+},
+{
+    $set: { "mpaa_rating": "Restricted" }
+},
+{
+  multi: true
+});
+db.movies.find();</code></pre>
+		<br>
+			<p>Omitting the <i>MULT</i> flag will only update 1 document at a time...</p>
+			</section>
+
+			<!-- DELETES -->
+			<section>
+				<h2>Deletes</h2>
+				<br>
+				<ul>
+					<li>remove() Syntax</li>
+					<li>Remove Example</li>
+					<li>Remove with <i>justOne</i></li>
+					<li>Removing all documents</li>
+				</ul>
+			</section>
+
+			<section>
+				<h2>remove() syntax ...</h2>
+				<br />
+				<pre><code class="javascript"> db.collection.remove({query}, {justOne});</code></pre>
+				<br />
+				<ul>
+					<li>query = deletion criteria (optional)</li>
+					<li>justOne = limits the deletion to just one document</li>
+				</ul>
+			</section>
+
+			<section>
+				<h4>Remove the short movies...</h4>
+				<br>
+				<pre><code class="javascript">db.movies.remove({
+   "runtime": { $lte: 100 }
+})</code></pre><br>
+				<h4>Remove just one short movie ....</h4>
+				<br>
+				<pre><code class="javascript">db.movies.remove({
+   "runtime": { $lte: 100 }
+}, true);</code></pre><br>
+				<h4>Remove all the movies ....</h4>
+				<br>
+				<pre><code class="javascript">db.movies.remove();</code></pre>
+			</section>
+
+			<section>
+				<h2>So....</h2><br>
+				<h2>How Do I Program to It?</h2>
+			</section>
+
+			<section>
+				<h4><a href="http://localhost:28017/">Admin Interface</a></h4>
+				<h4><a href="http://127.0.0.1:28017/movies/movies/">Native ReST API (Read Only)</a></h4>
+				<h4><a href="http://127.0.0.1:28017/movies/movies/?filter_title=Titanic">Native ReST API (With Filter)</a></h4>
+				<h4><a href="http://api.mongodb.org/java/current/">Java API</a></h2>
+			</section>
+
+			<section>
+				<h3><a href="http://docs.mongodb.org/manual/">MongoDB Manual</a></h3>
+			</section>
+
+			<section>
+				<h2>Important things I didn't cover</h2>
+				<br />
+				<ul>
+					<li>Setting Up The Local Database Server</li>
+					<li>Indexes</li>
+					<li>Aggregates</li>
+					<li>Sharding</li>
+					<li>Replication</li>
+					<li>Data Models</li>
+				</ul>
+			</section>
+
+		</div>
+
+	</div>
+
+	<script src="lib/js/head.min.js"></script>
+	<script src="js/reveal.min.js"></script>
+	<script
+		src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script>
+		// Full list of configuration options available here:
+		// https://github.com/hakimel/reveal.js#configuration
+		Reveal.initialize({
+			controls : true,
+			progress : true,
+			history : true,
+			center : true,
+
+			theme : Reveal.getQueryHash().theme, // available themes are in /css/theme
+			transition : Reveal.getQueryHash().transition || 'linear', // default/cube/page/concave/zoom/linear/fade/none
+
+			// Optional libraries used to extend on reveal.js
+			dependencies : [ {
+				src : 'lib/js/classList.js',
+				condition : function() {
+					return !document.body.classList;
+				}
+			}, {
+				src : 'plugin/markdown/marked.js',
+				condition : function() {
+					return !!document.querySelector('[data-markdown]');
+				}
+			}, {
+				src : 'plugin/markdown/markdown.js',
+				condition : function() {
+					return !!document.querySelector('[data-markdown]');
+				}
+			}, {
+				src : 'plugin/highlight/highlight.js',
+				async : true,
+				callback : function() {
+					hljs.initHighlightingOnLoad();
+				}
+			}, {
+				src : 'plugin/zoom-js/zoom.js',
+				async : true,
+				condition : function() {
+					return !!document.body.classList;
+				}
+			}, {
+				src : 'plugin/notes/notes.js',
+				async : true,
+				condition : function() {
+					return !!document.body.classList;
+				}
+			}
+			// { src: 'plugin/search/search.js', async: true, condition: function() { return !!document.body.classList; } }
+			// { src: 'plugin/remotes/remotes.js', async: true, condition: function() { return !!document.body.classList; } }
+			]
+		});
+
+		// Open all links in a new window.
+		$('a:not(.ignore)').attr('target', '_blank');
+	</script>
+
+</body>
+</html>
